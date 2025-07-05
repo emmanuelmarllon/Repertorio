@@ -90,7 +90,16 @@
         display: block;
         opacity: 1;
       }
-
+      .musica {
+        margin: 20px 0;
+      }
+      .musica iframe {
+        box-shadow: 1px 1px 20px rgba(0, 77, 13, 0.5);
+        margin: 0;
+        max-width: 650px;
+        max-height: 350px;
+        margin-bottom: 20px;
+      }
       code span.acorde {
         color: #4caf50;
         font-weight: bold;
@@ -303,6 +312,7 @@
 
     <div id="cristo" class="tab-content active">
       <pre><code>
+        
 Tom: <span class="acorde">G</span> 
 Capotraste: Não usa 
 Ritmo: 6/8 Worship (⬇⬇⬆⬇⬆⬇)
@@ -633,7 +643,18 @@ Ministração (muda)
       <span class="speed-label" id="speedValue">2</span>
       <button id="toggleScroll" disabled>Start</button>
     </div>
-
+    <div class="musica">
+      <iframe
+        width="1695"
+        height="713"
+        src="https://www.youtube.com/embed/iWYcaIeo9E8?list=PLOCmCa_adTT4VM9R0EO9dPA8Yp1-8QzuC"
+        title="Som do Secreto Vol.3 - Cristo - (Clipe Oficial) - Alessandro Vilas Boas | Os Bravos"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen
+      ></iframe>
+    </div>
     <script>
       const MAX_VISIBLE_BUTTONS = 10; // nº máximo de botões visíveis no filtro
 
