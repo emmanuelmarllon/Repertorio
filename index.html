@@ -3,88 +3,289 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Repertório Violão Emanuel</title>
-
+    <title>Repertório Culto Adols</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      /* Estilo básico para as abas */
       body {
-        font-family: Arial, sans-serif;
+        font-family: "Poppins", sans-serif;
         background: #121212;
         color: #eee;
         margin: 0;
         padding: 20px;
+        font-size: clamp(14px, 2vw, 16px);
       }
+
+      #searchInput {
+        width: 100%;
+        max-width: 500px;
+        padding: 12px 16px;
+        font-size: 1rem;
+        border-radius: 8px;
+        border: none;
+        outline: none;
+        background-color: #222;
+        color: #eee;
+        box-shadow: inset 0 0 5px #4caf50;
+        transition: box-shadow 0.3s ease;
+        margin-bottom: 20px;
+      }
+
+      #searchInput::placeholder {
+        color: #999;
+      }
+
+      #searchInput:focus {
+        box-shadow: 0 0 8px #76ff03;
+      }
+
       .tabs {
         display: flex;
         gap: 10px;
         margin-bottom: 20px;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
       }
+
+      .tabs::-webkit-scrollbar {
+        display: none;
+      }
+
       .tab-button {
-        background: #222;
+        background: #1f1f1f;
         border: none;
         padding: 10px 20px;
         cursor: pointer;
         border-radius: 5px;
         color: #ccc;
         transition: background-color 0.3s;
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-size: clamp(12px, 2vw, 16px);
       }
+
       .tab-button.active {
         background: #4caf50;
         color: white;
         font-weight: bold;
       }
+
       .tab-content {
         display: none;
         background: #222;
         padding: 20px;
         border-radius: 8px;
-        white-space: pre-wrap; /* mantém quebras de linha */
+        white-space: pre-wrap;
         font-family: monospace;
-        font-size: 16px;
+        font-size: clamp(13px, 2vw, 16px);
         line-height: 1.4;
+        opacity: 0;
+        transition: opacity 0.3s ease;
       }
+
       .tab-content.active {
         display: block;
+        opacity: 1;
       }
-      .acordes-container {
-        margin-top: 15px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
+
+      code span.acorde {
+        color: #4caf50;
+        font-weight: bold;
+      }
+
+      .top-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 50%;
+        font-size: 18px;
         cursor: pointer;
+        box-shadow: 0 0 5px #4caf50;
+        z-index: 1000;
       }
 
-      .acorde {
-        text-align: center;
-        color: #ccc;
-        font-size: 14px;
+      .scroll-control {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #222;
+        padding: 15px 20px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        box-shadow: 0 0 10px #4caf50;
+        z-index: 1000;
+        flex-wrap: wrap;
+        width: 90%;
+        max-width: 500px;
       }
 
-      .acorde img {
-        width: 70px;
-        height: auto;
-        display: block;
-        margin: 0 auto 6px auto;
+      .btn-speed-control {
+        background-color: #4caf50;
+        border: none;
+        color: white;
+        font-weight: bold;
+        font-size: clamp(14px, 2vw, 18px);
+        padding: 8px 14px;
+        margin: 0 6px;
         border-radius: 6px;
-        box-shadow: 0 0 8px #4caf50aa;
-      }
-      /* deixa as linhas do diagrama claras em fundo escuro */
-      .acorde svg {
-        width: 70px;
-        height: 120px;
-        stroke: #f0f0f0; /* cor dos traços/trastes/casas */
-        fill: none; /* não preenche nada */
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        user-select: none;
+        box-shadow: 0 3px 6px rgba(76, 175, 80, 0.5);
       }
 
-      .acorde text {
-        fill: #f0f0f0; /* cor dos números e título */
-        font-size: 10px;
+      .btn-speed-control:hover {
+        background-color: #5bca00;
+      }
+
+      .btn-speed-control:active {
+        background-color: #388e3c;
+        box-shadow: none;
+      }
+
+      .btn-speed-control:disabled {
+        background-color: #555;
+        cursor: not-allowed;
+        box-shadow: none;
+        color: #aaa;
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        width: 150px;
+        height: 8px;
+        background: #444;
+        border-radius: 5px;
+        cursor: pointer;
+        outline: none;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #4caf50;
+        cursor: pointer;
+        border-radius: 50%;
+        border: none;
+        margin-top: -6px;
+        transition: background 0.3s;
+      }
+
+      input[type="range"]:hover::-webkit-slider-thumb {
+        background: #5bca00;
+      }
+
+      button {
+        background: #4caf50;
+        border: none;
+        padding: 10px 16px;
+        color: #fff;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-size: clamp(14px, 2vw, 16px);
+      }
+
+      button:hover {
+        background: #5bca00;
+        color: #fff;
+      }
+
+      .speed-label {
+        min-width: 50px;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      /* Responsividade */
+      @media (max-width: 768px) {
+        body {
+          padding: 15px 10px;
+        }
+
+        .tab-button {
+          padding: 8px 14px;
+        }
+
+        .scroll-control {
+          gap: 10px;
+          padding: 10px 15px;
+        }
+
+        input[type="range"] {
+          width: 100px;
+        }
+
+        .top-button {
+          bottom: 15px;
+          right: 15px;
+          padding: 8px;
+          font-size: 16px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .scroll-control {
+          flex-direction: column;
+          left: 82vw;
+          top: 30vh;
+          max-height: 250px;
+          max-width: 80px;
+          align-items: center;
+        }
+        .tabs {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        input[type="range"] {
+          width: 100%;
+        }
+
+        .btn-speed-control {
+          width: 100%;
+          margin: 5px 0;
+        }
+
+        .tab-button {
+          font-size: 12px;
+          padding: 6px 10px;
+        }
+
+        .tab-content {
+          font-size: 13px;
+          padding: 10px;
+        }
       }
     </style>
   </head>
   <body>
-    <h1>Repertório Violão Emanuel</h1>
+    <h1>Repertório Culto Adols</h1>
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Pesquisar música..."
+      style="
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        border: none;
+      "
+    />
 
     <div class="tabs">
       <button class="tab-button active" data-tab="cristo">Cristo</button>
@@ -101,722 +302,509 @@
     </div>
 
     <div id="cristo" class="tab-content active">
-      <pre>
-Tom: G 
+      <pre><code>
+Tom: <span class="acorde">G</span> 
 Capotraste: Não usa 
 Ritmo: 6/8 Worship (⬇⬇⬆⬇⬆⬇)
 
 
 Intro
-G G/B (2x)
-Em7
+<span class="acorde">G</span> <span class="acorde">G/B</span> (2x)
+<span class="acorde">Em7</span>
 
 Verso 1 (“Se passam os anos...”)
-G G/B (2x)
-Em7
-
-G G/B (2x)
-Em7
+<span class="acorde">G</span> <span class="acorde">G/B</span> (3x)
+<span class="acorde">Em7</span>
+(Repete 2x)
 
 Pré-Refrão (“Oh Espírito...”)
-Am7 G/B G
-Am7 G/B Em7
-
-Am7 G/B G
-Am7 G/B Em7
+<span class="acorde">Am7</span> <span class="acorde">G/B</span> <span class="acorde">G</span>
+<span class="acorde">Am7</span> <span class="acorde">G/B</span> <span class="acorde">Em7</span>
+(Repetido 2x)
 
 Verso 2 (“Os segredos de Deus...”)
-G G/B (2x)
-Em7
-
-G G/B (2x)
-Em7
+<span class="acorde">G</span> <span class="acorde">G/B</span> (3x)
+<span class="acorde">Em7</span>
+(Repetido 2x)
 
 Pré-Refrão (repetido)
 Mesma sequência do anterior
-Am7 G/B G
-Am7 G/B Em7
-(repetido 2x)
+<span class="acorde">Am7</span> <span class="acorde">G/B</span> <span class="acorde">G</span> 
+<span class="acorde">Am7</span> <span class="acorde">G/B</span> <span class="acorde">Em7</span> 
+(Repete 2x) 
+
 
 Ponte (“Cristo, beleza de Deus...”)
-C7M Bm
-C7M Bm
-C7M Bm C7M Bm7
+<span class="acorde">C7M</span> <span class="acorde">Bm</span> (3x) 
+<span class="acorde">C7M</span> <span class="acorde">Bm7</span>
 (repetido 2x)
 
 Refrão (“Qual a beleza...”)
-C Am7 D9(11)
-(repetido 4x, depois de novo no final da música)
+<span class="acorde">C</span> <span class="acorde">Am7</span> <span class="acorde">D9(11)</span> (8x)
 
 Interlúdio (instrumental)
-C7M G/B Em7 D9
+<span class="acorde">C7M</span> <span class="acorde">G/B</span> <span class="acorde">Em7</span> 
+<span class="acorde">D9</span>
 (repete 2x)
 
 Parte Final (Cristo é tudo...)
-C7M G/B
-Em7 D9
-(repete 4x)
+<span class="acorde">C7M</span> <span class="acorde">G/B</span>
+<span class="acorde">Em7</span> <span class="acorde">D9</span>
+(repete 10x)
 
 Refrão Final (mesmo do anterior)
-C Am7 D9(11)
+<span class="acorde">C</span> <span class="acorde">Am7</span> <span class="acorde">D9(11)</span>
 (repete 4x ou até acabar 🙌)
-    </pre
-      >
-      <div class="acordes-container"></div>
+      </code></pre>
     </div>
+
     <div id="firmado" class="tab-content">
-      <pre>
+      <pre><code>
 Tom: B
 Forma dos acordes em G (Capotraste na 4ª casa)
 Ritmo: 6/8 levadinha worship (⬇⬇⬆⬇⬆⬇)
 
 Verso 1 *(“Meu Senhor...”)
-C G
-C G
-C G
-C G
+<span class="acorde">C</span> <span class="acorde">G</span> <span class="acorde">D</span>(4x)
 
 Pré-Refrão *(“É o meu fundamento...”)
-C D11
-G/B Em
-C D11
-G/B Em
+<span class="acorde">C</span> <span class="acorde">D11</span> <span class="acorde">G/B</span>
+<span class="acorde">Em</span>
+(Repete 2x)
 
 Refrão *(“Estou firmado na rocha...”)
-G
-Am
-Em
-C
-
-G
-Am
-Em
-C
-
-Ponte / Interlúdio *(“Oh oh oh...”)
-Am C D
+<span class="acorde">G</span> <span class="acorde">Am</span> <span class="acorde">Em</span> 
+<span class="acorde">C</span>
+(Repete 2x)
 
 Final (Yahweh...)
-Am C D
-Am C D
-      </pre>
+<span class="acorde">Am</span> <span class="acorde">C</span> <span class="acorde">D</span>(2x)
+      </code></pre>
     </div>
-    <div class="acordes-container"></div>
+
     <div id="sublime" class="tab-content">
-      <pre>
+      <pre><code>
 Tom: D
 Capotraste: Não usa
 Ritmo: 6/8 ou 4/4 (depende do arranjo, mas geralmente uma balada suave: ⬇⬇⬆⬇⬆⬇)
 
 Intro
-D Bm A G
+<span class="acorde">D</span> <span class="acorde">Bm</span> <span class="acorde">A</span> <span class="acorde">G</span>
 
 Verso 1 (“Quem é como Tu...”)
-D Bm A G
-D Bm A G A
-D Bm A
+<span class="acorde">D</span> <span class="acorde">Bm</span> <span class="acorde">A</span> <span class="acorde">G</span>(2x)
+<span class="acorde">A</span> <span class="acorde">D</span> <span class="acorde">Bm</span> <span class="acorde">A</span>
 
 Refrão (“Maravilhoso, admirável...”)
-G A
-D Bm A
-G A
-D
-Bm A
-G
+<span class="acorde">G</span> <span class="acorde">A</span> <span class="acorde">D</span> <span class="acorde">Bm</span> <span class="acorde">A</span> (2x)
+<span class="acorde">G</span>
 
 Verso 2 (“Quem é como Tu...” versão 2)
-D Bm A G
-D Bm A G
-A D
-Bm A
+<span class="acorde">D</span> <span class="acorde">Bm</span> <span class="acorde">A</span> <span class="acorde">G</span>(2x)
+<span class="acorde">A</span> <span class="acorde">D</span> <span class="acorde">Bm</span> <span class="acorde">A</span>
 
 Refrão (repete)
 Mesmo esquema:
-G A
-D Bm A
-G A
-D
-Bm A
+<span class="acorde">G7m</span> <span class="acorde">A</span> <span class="acorde">D</span> <span class="acorde">Bm</span> 
+<span class="acorde">A</span>
+(Repete 4x)
 
 Solo (instrumental)
-G A D
-Bm A
-G A D
-Bm A
+<span class="acorde">G</span> <span class="acorde">A</span> <span class="acorde">D</span>
+<span class="acorde">Bm</span> <span class="acorde">A</span>
+(repete 2x)
 
 Ponte (“Ah, como espero o dia...”)
-Em D A
-Em D A
-Em D A
-Em D A
-(repete 2x)
+<span class="acorde">Em</span> <span class="acorde">D</span> <span class="acorde">A</span>(8x)
 
 Refrão (reprise)
 Mesmo padrão:
-G A
-D Bm A
-G A
-D
-Bm A
-
-Ponte (repetida)
-Em D A
+<span class="acorde">G</span> <span class="acorde">A</span> <span class="acorde">D</span> <span class="acorde">Bm</span>
+<span class="acorde">A</span>
 (repete 2x)
 
-Refrão Final
-G A
-D Bm A
-G A
-D
-Bm A
-G
+Ponte (“Ah, como espero o dia...”)
+<span class="acorde">Em</span> <span class="acorde">D</span> <span class="acorde">A</span>(8x)
 
-    </pre
-      >
-      <div class="acordes-container"></div>
+Refrão (reprise)
+<span class="acorde">G</span> <span class="acorde">A</span> <span class="acorde">D</span> <span class="acorde">Bm</span>
+<span class="acorde">A</span>
+(repete 2x)
+
+      </code></pre>
     </div>
+
     <div id="Yeshua" class="tab-content">
-      <pre>
+      <pre><code>
 Tom: Eb (tocada com forma de D) 
 Capotraste: 1ª casa
 Ritmo: ⬇⬆⬆ ⬇⬆⬆(constante) 
-Acordes: G – D – Bm – A 
+Acordes: <span class="acorde">G</span> – <span class="acorde">D</span> – <span class="acorde">Bm</span> – <span class="acorde">A</span> 
+(repete ate o final da musica)
 Observações: Ritmo constante, fácil de embalar. Mantém a vibe do início ao fim.
-      </pre>
-      <div class="acordes-container"></div>
+      </code></pre>
     </div>
+
     <div id="espreita" class="tab-content">
-      <pre>
+      <pre><code>
 Tom: Bm
 Capotraste: Não usa
 Ritmo: Balada 6/8 (⬇⬇⬆⬇⬆⬇) ou estilo livre, crescente conforme a música
 
 Intro
-Em Bm A4 A
-Em Bm D A4 A
-Em Bm A4 A
+<span class="acorde">Em</span> <span class="acorde">Bm</span> <span class="acorde">A4</span> <span class="acorde">A</span>
+<span class="acorde">Em</span> <span class="acorde">Bm</span> <span class="acorde">D</span> <span class="acorde">A4</span> <span class="acorde">A</span>
+<span class="acorde">Em</span> <span class="acorde">Bm</span> <span class="acorde">A4</span> <span class="acorde">A</span>
 
 Verso 1 (“Na santa expectativa...”)
-Bm
-G
-D
+<span class="acorde">Bm</span> <span class="acorde">G</span> <span class="acorde">D</span>
 
 Refrão 1 (“Eu estou à espreita...”)
-Em
-D/F#
-A
-
-Em
-Bm
-A
-
-Em Bm A4 A (“Oh oh oh...”)
+<span class="acorde">Em</span> <span class="acorde">D/F#</span> <span class="acorde">A</span>
+<span class="acorde">Em</span> <span class="acorde">Bm</span> <span class="acorde">A</span>
+<span class="acorde">Em</span> <span class="acorde">Bm</span> <span class="acorde">A4</span> <span class="acorde">A</span> (“Oh oh oh...”)
 
 Verso 2 (Repetição da primeira parte)
-Bm
-G
-D
+<span class="acorde">Bm</span> <span class="acorde">D</span> <span class="acorde">G</span>
 
 Refrão 2 (com letra nova)
-Em
-D/F#
-A
-
-G7M
-A
-Bm
-G7M
-A
-Bm
-
-G7M
-A4
-Bm7
-Bm
+<span class="acorde">Em</span> <span class="acorde">D/F#</span> <span class="acorde">A</span>
+<span class="acorde">G7M</span> <span class="acorde">A</span> <span class="acorde">Bm</span>(2x)
+<span class="acorde">G7M</span> <span class="acorde">A4</span> <span class="acorde">Bm7</span>
+<span class="acorde">Bm</span>
 
 Instrumental/Interlúdio
-Bm A4 G7M
-Bm A G7M
-Em F#m Bm
-Em A G7M
-Em Bm
+<span class="acorde">Bm</span> <span class="acorde">A4</span> <span class="acorde">G7M</span>
+<span class="acorde">Bm</span> <span class="acorde">A</span> <span class="acorde">G7M</span>
+<span class="acorde">Em</span> <span class="acorde">F#m</span> <span class="acorde">Bm</span>
+<span class="acorde">Em</span> <span class="acorde">A</span> <span class="acorde">G7M</span>
+<span class="acorde">Em</span> <span class="acorde">Bm</span>
 
 Ponte (“A fome que humilha...”)
-Bm Em
-A
-G7M
-Em
-
-G7M
-A
-Bm
-G7M
-A
-Bm
-
-G7M
-A4
-Bm7
-Bm
+<span class="acorde">Bm</span> <span class="acorde">Em</span> <span class="acorde">A</span>
+<span class="acorde">G7M</span> <span class="acorde">Em</span>
+<span class="acorde">G7M</span> <span class="acorde">A</span> <span class="acorde">Bm</span> (2x)
+<span class="acorde">G7M</span> <span class="acorde">A4</span> <span class="acorde">Bm7</span> 
+<span class="acorde">Bm</span>
 
 Final/Refrão Final
-Em
-Bm
-A
-</pre
-      >
-      <div class="acordes-container"></div>
+<span class="acorde">Em</span> <span class="acorde">Bm</span> <span class="acorde">A</span>
+      </code></pre>
     </div>
+
     <div id="volto" class="tab-content">
-      <pre>
+      <pre><code>
 Tom: E
 Capotraste: Não usa
 Ritmo: 4/4 Worship suave (⬇⬇⬆⬆⬇⬇) ou livre no início, cresce na ponte
 
 Intro
-A E C#m B
+<span class="acorde">A</span> <span class="acorde">E</span> <span class="acorde">C#m</span> 
+<span class="acorde">B</span>
 
 Verso 1 (“Teu abraço em meio à noite...”)
-A E
-A E
-F#m A
-C#m B
+<span class="acorde">A</span> <span class="acorde">E</span> (2x)
+<span class="acorde">F#m</span> <span class="acorde">A</span> <span class="acorde">C#m</span> 
+<span class="acorde">B</span>
 
 Refrão 1 (“Volto os meus olhos...”)
-A
-G#m7
-A
-G#m
-A C#m B
+<span class="acorde">A</span> <span class="acorde">G#m7</span> <span class="acorde">A</span>
+<span class="acorde">G#m</span> <span class="acorde">A</span> <span class="acorde">C#m</span> 
+<span class="acorde">B</span>
 
 Verso 2 (“Bem melhor que a vida...”)
-A E
-A E
-F#m A
-C#m B
+<span class="acorde">A</span> <span class="acorde">E</span> <span class="acorde">A</span> 
+<span class="acorde">E</span> <span class="acorde">F#m</span> <span class="acorde">A</span>
+<span class="acorde">C#m</span> <span class="acorde">B</span>
 
 Refrão 2 (igual ao primeiro)
-A
-G#m7
-A
-G#m
-A C#m B
+<span class="acorde">A</span> <span class="acorde">G#m7</span> <span class="acorde">A</span>
+<span class="acorde">G#m</span> <span class="acorde">A</span> <span class="acorde">C#m</span> 
+<span class="acorde">B</span>
 
 Instrumental
-E B F#m A
+<span class="acorde">E</span> <span class="acorde">B</span> <span class="acorde">F#m</span> <span class="acorde">A</span>
 (repete 2x)
 
 Ponte (“Vem derrama Tua glória...”)
-E B
-F#m A
-E B
-F#m A
+<span class="acorde">E</span> <span class="acorde">B</span> <span class="acorde">F#m</span> 
+<span class="acorde">A</span>
+(Repete 2x)
 
-Refrão Final
-E B C#m A
+Instrumental 2
+<span class="acorde">E</span> <span class="acorde">B</span> <span class="acorde">C#m</span> <span class="acorde">A</span>
 (repete 2x)
 
 Final
-E B C#m A
-E B C#m A
-</pre
-      >
-      <div class="acordes-container"></div>
+<span class="acorde">E</span> <span class="acorde">B</span> <span class="acorde">F#m</span> <span class="acorde">A</span>
+(repete 2x)
+
+Instrumental 3
+<span class="acorde">E</span> <span class="acorde">B</span> <span class="acorde">C#m</span> <span class="acorde">A</span>
+      </code></pre>
     </div>
+
     <div id="amor" class="tab-content">
-      <pre>
+      <pre><code>
 Tom: G
 Capotraste: Não usa
 Ritmo: Worship suave e progressivo (6/8 ou 4/4)
 
 Intro
-G7M C7M
+<span class="acorde">G7M</span> <span class="acorde">C7M</span>
 
 Verso 1
-G7M C7M
-Em7(9) C7M Cm7
+<span class="acorde">G7M</span> <span class="acorde">C7M</span>
+<span class="acorde">Em7(9)</span> <span class="acorde">C7M</span> <span class="acorde">Cm7</span>
 
-G7M C7M
-Em7(9) G/B C7M
+<span class="acorde">G7M</span> <span class="acorde">C7M</span>
+<span class="acorde">Em7(9)</span> <span class="acorde">G/B</span> <span class="acorde">C7M</span>
 
 Pré-Refrão
-Am7 Am7 D
+<span class="acorde">Am7</span> <span class="acorde">Am7</span> <span class="acorde">D</span>
 
 Refrão
-G C
-Em7 D C
+<span class="acorde">G</span> <span class="acorde">C</span>
+<span class="acorde">Em7</span> <span class="acorde">D</span> <span class="acorde">C</span>
 
-G C
-Em7 D C
+<span class="acorde">G</span> <span class="acorde">C</span>
+<span class="acorde">Em7</span> <span class="acorde">D</span> <span class="acorde">C</span>
 
 Verso 2 (repetição do verso 1)
-G7M C7M
-Em7(9) D C7M
+<span class="acorde">G7M</span> <span class="acorde">C7M</span>
+<span class="acorde">Em7(9)</span> <span class="acorde">D</span> <span class="acorde">C7M</span>
 
-G7M C7M
-Em7(9) D C7M
+<span class="acorde">G7M</span> <span class="acorde">C7M</span>
+<span class="acorde">Em7(9)</span> <span class="acorde">D</span> <span class="acorde">C7M</span>
 
 Pré-Refrão
-Am7 C9
+<span class="acorde">Am7</span> <span class="acorde">C9</span>
 
 Refrão
-G C
-Em7 D C
+<span class="acorde">G</span> <span class="acorde">C</span>
+<span class="acorde">Em7</span> <span class="acorde">D</span> <span class="acorde">C</span>
 
-G C
-Em7 D C
+<span class="acorde">G</span> <span class="acorde">C</span>
+<span class="acorde">Em7</span> <span class="acorde">D</span> <span class="acorde">C</span>
 
 Solo/Interlúdio
-Em7 D C9
+<span class="acorde">Em7</span> <span class="acorde">D</span> <span class="acorde">C9</span>
 (repete 4x)
 
 Ponte
-Am7 C9
+<span class="acorde">Am7</span> <span class="acorde">C9</span>
 (repete 4x)
 
 Verso Final
-G C/E
-D C
+<span class="acorde">G</span> <span class="acorde">C/E</span>
+<span class="acorde">D</span> <span class="acorde">C</span>
 
-G C/E
-D C
+<span class="acorde">G</span> <span class="acorde">C/E</span>
+<span class="acorde">D</span> <span class="acorde">C</span>
 
 Ministração (muda)
-G F Em C
-G F Em D#
-</pre
+<span class="acorde">G</span> <span class="acorde">F</span> <span class="acorde">Em</span> <span class="acorde">C</span>
+<span class="acorde">G</span> <span class="acorde">F</span> <span class="acorde">Em</span> <span class="acorde">D#</span>
+      </code></pre>
+      <div
+        id="noResults"
+        style="display: none; color: #eee; margin-bottom: 20px"
       >
-      <div class="acordes-container"></div>
+        Resultado não encontrado 😕
+      </div>
     </div>
 
-    <!-- SVGuitar (desenha os acordes em SVG) -->
-    <script src="https://omnibrain.github.io/svguitar/js/svguitar.umd.js"></script>
+    <button onclick="scrollToTop()" class="top-button" title="Voltar ao topo">
+      ↑
+    </button>
+    <div class="scroll-control">
+      <label for="speedRange">Velocidade:</label>
+      <button id="decreaseSpeed" class="btn-speed-control">-</button>
+      <button id="increaseSpeed" class="btn-speed-control">+</button>
+
+      <input
+        type="range"
+        id="speedRange"
+        min="0"
+        max="10"
+        step="0.1"
+        value="2"
+      />
+      <span class="speed-label" id="speedValue">2</span>
+      <button id="toggleScroll" disabled>Start</button>
+    </div>
 
     <script>
-      /* ==== 1. TABS ==== */
-      const buttons = document.querySelectorAll(".tab-button");
-      const contents = document.querySelectorAll(".tab-content");
+      const MAX_VISIBLE_BUTTONS = 10; // nº máximo de botões visíveis no filtro
 
-      buttons.forEach((btn) => {
+      /* ========================================================
+         CACHE DE ELEMENTOS DOM
+      ======================================================== */
+      const searchInput = document.getElementById("searchInput");
+      const tabButtons = Array.from(document.querySelectorAll(".tab-button"));
+      const tabContents = Array.from(document.querySelectorAll(".tab-content"));
+      const noResults = document.getElementById("noResults");
+
+      const speedRange = document.getElementById("speedRange");
+      const speedValue = document.getElementById("speedValue");
+      const toggleBtn = document.getElementById("toggleScroll");
+      const decreaseBtn = document.getElementById("decreaseSpeed");
+      const increaseBtn = document.getElementById("increaseSpeed");
+
+      /* ========================================================
+         1) FILTRO DE MÚSICAS
+      ======================================================== */
+      searchInput.addEventListener("input", handleSearch);
+      function handleSearch() {
+        const filter = searchInput.value.toLowerCase();
+        console.log("🔍 Buscando:", filter);
+
+        let visibleCount = 0;
+        let firstVisibleBtn = null;
+
+        tabButtons.forEach((btn) => {
+          const matched = btn.textContent.toLowerCase().includes(filter);
+          const allowed = visibleCount < MAX_VISIBLE_BUTTONS;
+
+          if (matched && allowed) {
+            btn.style.display = "inline-block";
+            if (!firstVisibleBtn) firstVisibleBtn = btn;
+            visibleCount++;
+          } else {
+            btn.style.display = "none";
+          }
+        });
+
+        console.log("▶ Botões visíveis:", visibleCount);
+
+        // mostra / esconde mensagem de resultado vazio
+        noResults.style.display = visibleCount === 0 ? "block" : "none";
+
+        // ativa primeira aba visível ou limpa seleções
+        if (firstVisibleBtn) {
+          firstVisibleBtn.click();
+        } else {
+          clearActiveTabs();
+        }
+      }
+
+      function clearActiveTabs() {
+        tabButtons.forEach((b) => b.classList.remove("active"));
+        tabContents.forEach((c) => {
+          c.classList.remove("active");
+          c.style.opacity = 0;
+        });
+        console.log("ℹ Abas limpas");
+      }
+
+      /* ========================================================
+         2) TROCA DE ABAS
+      ======================================================== */
+      tabButtons.forEach((btn) => {
         btn.addEventListener("click", () => {
-          console.log("Clique na aba:", btn.textContent.trim());
-          buttons.forEach((b) => b.classList.remove("active"));
-          contents.forEach((c) => c.classList.remove("active"));
+          console.log("📑 Abriu aba:", btn.textContent.trim());
+
+          tabButtons.forEach((b) => b.classList.remove("active"));
+          tabContents.forEach((c) => {
+            c.classList.remove("active");
+            c.style.opacity = 0;
+          });
 
           btn.classList.add("active");
-          const tabId = btn.getAttribute("data-tab");
-          console.log("Ativando conteúdo da aba:", tabId);
-          document.getElementById(tabId).classList.add("active");
-          atualizarAcordes(tabId); // troca os diagramas
+          const target = document.getElementById(btn.dataset.tab);
+          target.classList.add("active");
+          setTimeout(() => (target.style.opacity = 1), 10);
         });
       });
 
-      /* ==== 2. LISTA DE ACORDES POR MÚSICA ==== */
-      const acordesPorMusica = {
-        cristo: [
-          "G",
-          "G/B",
-          "Em",
-          "Em7",
-          "Am",
-          "Am7",
-          "D",
-          "D9",
-          "C",
-          "C7M",
-          "Bm",
-          "Bm7",
-        ],
-        firmado: ["C", "G", "Dsus4", "F", "Am", "Em", "D11", "G/B"],
-        sublime: ["D", "Bm", "A", "G", "G7M"],
-        Yeshua: ["G", "D", "Bm", "A"],
-        espreita: ["Em", "Bm", "A4", "A", "D", "D/F#", "G7M", "Bm7"],
-        volto: ["A", "E", "C#m", "B", "G#m7", "F#m"],
-        amor: [
-          "G7M",
-          "C7M",
-          "Em7",
-          "Cm7",
-          "G/B",
-          "Am7",
-          "D",
-          "C9",
-          "C/E",
-          "F",
-          "Em",
-          "D#",
-        ],
-      };
-
-      /* ==== 3. DICIONÁRIO DE FINGERINGS ==== */
-      function getFingers(ch) {
-        const f = {
-          C: [
-            [6, "x"],
-            [5, 3],
-            [4, 2],
-            [3, 0],
-            [2, 1],
-            [1, 0],
-          ],
-          C7M: [
-            [6, "x"],
-            [5, 3],
-            [4, 2],
-            [3, 0],
-            [2, 0],
-            [1, 0],
-          ],
-          D: [
-            [6, "x"],
-            [5, "x"],
-            [4, 0],
-            [3, 2],
-            [2, 3],
-            [1, 2],
-          ],
-          Dsus4: [
-            [6, "x"],
-            [5, "x"],
-            [4, 0],
-            [3, 2],
-            [2, 3],
-            [1, 3],
-          ],
-          D9: [
-            [6, "x"],
-            [5, 5],
-            [4, 4],
-            [3, 5],
-            [2, 5],
-            [1, 0],
-          ],
-          D11: [
-            [6, "x"],
-            [5, "x"],
-            [4, 0],
-            [3, 2],
-            [2, 1],
-            [1, 0],
-          ],
-          E: [
-            [6, 0],
-            [5, 2],
-            [4, 2],
-            [3, 1],
-            [2, 0],
-            [1, 0],
-          ],
-          Em: [
-            [6, 0],
-            [5, 2],
-            [4, 2],
-            [3, 0],
-            [2, 0],
-            [1, 0],
-          ],
-          Em7: [
-            [6, 0],
-            [5, 2],
-            [4, 2],
-            [3, 0],
-            [2, 3],
-            [1, 0],
-          ],
-          F: [
-            [6, 1],
-            [5, 3],
-            [4, 3],
-            [3, 2],
-            [2, 1],
-            [1, 1],
-          ],
-          G: [
-            [6, 3],
-            [5, 2],
-            [4, 0],
-            [3, 0],
-            [2, 0],
-            [1, 3],
-          ],
-          "G/B": [
-            [6, "x"],
-            [5, 2],
-            [4, 0],
-            [3, 0],
-            [2, 0],
-            [1, 3],
-          ],
-          G7M: [
-            [6, 3],
-            [5, 2],
-            [4, 0],
-            [3, 0],
-            [2, 0],
-            [1, 2],
-          ],
-          A: [
-            [6, "x"],
-            [5, 0],
-            [4, 2],
-            [3, 2],
-            [2, 2],
-            [1, 0],
-          ],
-          A4: [
-            [6, "x"],
-            [5, 0],
-            [4, 2],
-            [3, 2],
-            [2, 3],
-            [1, 0],
-          ],
-          Am: [
-            [6, "x"],
-            [5, 0],
-            [4, 2],
-            [3, 2],
-            [2, 1],
-            [1, 0],
-          ],
-          Am7: [
-            [6, "x"],
-            [5, 0],
-            [4, 2],
-            [3, 0],
-            [2, 1],
-            [1, 0],
-          ],
-          B: [
-            [6, "x"],
-            [5, 2],
-            [4, 4],
-            [3, 4],
-            [2, 4],
-            [1, 2],
-          ],
-          Bm: [
-            [6, "x"],
-            [5, 2],
-            [4, 4],
-            [3, 4],
-            [2, 3],
-            [1, 2],
-          ],
-          Bm7: [
-            [6, "x"],
-            [5, 2],
-            [4, 4],
-            [3, 2],
-            [2, 3],
-            [1, 2],
-          ],
-          "C#m": [
-            [6, "x"],
-            [5, 4],
-            [4, 6],
-            [3, 6],
-            [2, 5],
-            [1, 4],
-          ],
-          "F#m": [
-            [6, 2],
-            [5, 4],
-            [4, 4],
-            [3, 2],
-            [2, 2],
-            [1, 2],
-          ],
-          "G#m7": [
-            [6, 4],
-            [5, 6],
-            [4, 4],
-            [3, 4],
-            [2, 4],
-            [1, 4],
-          ],
-          Cm7: [
-            [6, "x"],
-            [5, 3],
-            [4, 5],
-            [3, 3],
-            [2, 4],
-            [1, 3],
-          ],
-          C9: [
-            [6, "x"],
-            [5, 3],
-            [4, 2],
-            [3, 3],
-            [2, 3],
-            [1, 3],
-          ],
-          "D#": [
-            [6, "x"],
-            [5, 6],
-            [4, 8],
-            [3, 8],
-            [2, 8],
-            [1, 6],
-          ],
-        };
-
-        if (!f[ch]) {
-          console.warn(`Acorde "${ch}" não definido, desenhando vazio.`);
-          return { title: ch, fingers: [] };
-        }
-
-        console.log(`Pegando dedos para acorde: ${ch}`, f[ch]);
-        return { title: ch, fingers: f[ch] };
+      /* ========================================================
+         3) VOLTAR AO TOPO
+      ======================================================== */
+      function scrollToTop() {
+        console.log("⬆ Scroll to top");
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
 
-      /* ==== 4. RENDERIZA OS ACORDES COM SVGUITAR ==== */
-      function atualizarAcordes(musicaId) {
-        console.log(`Atualizando acordes da música: ${musicaId}`);
-        const cont = document.querySelector(`#${musicaId} .acordes-container`);
-        if (!cont) {
-          console.warn(`Container para ${musicaId} não encontrado!`);
-          return;
+      /* ========================================================
+         4) SCROLL AUTOMÁTICO CONTROLADO
+      ======================================================== */
+      let scrollInterval = null;
+      let speed = Number(speedRange.value);
+      let acc = 0; // acumulador para velocidades < 1px
+
+      updateSpeedUI();
+
+      speedRange.addEventListener("input", () => {
+        speed = Number(speedRange.value);
+        console.log("🎚 Slider mudou ->", speed);
+        updateSpeedUI();
+
+        if (scrollInterval) {
+          stopAutoScroll();
+          if (speed > 0) startAutoScroll();
         }
-        cont.innerHTML = "";
+      });
 
-        const acordes = acordesPorMusica[musicaId] || [];
-        console.log(`Acordes para "${musicaId}":`, acordes);
-
-        if (acordes.length === 0) {
-          cont.textContent = "Nenhum acorde cadastrado para essa música 😢";
-          return;
+      toggleBtn.addEventListener("click", () => {
+        if (scrollInterval) {
+          console.log("⏸ Pausou auto‑scroll");
+          stopAutoScroll();
+        } else if (speed > 0) {
+          console.log("▶ Iniciou auto‑scroll, vel:", speed);
+          startAutoScroll();
         }
+      });
 
-        acordes.forEach((ac) => {
-          console.log(`Desenhando acorde: ${ac}`);
+      decreaseBtn.addEventListener("click", () => {
+        speed = Math.max(0, +(speed - 0.2).toFixed(1));
+        speedRange.value = speed;
+        speedRange.dispatchEvent(new Event("input"));
+      });
 
-          const wrap = document.createElement("div");
-          wrap.className = "acorde";
+      increaseBtn.addEventListener("click", () => {
+        speed = Math.min(10, +(speed + 0.2).toFixed(1));
+        speedRange.value = speed;
+        speedRange.dispatchEvent(new Event("input"));
+      });
 
-          const svgBox = document.createElement("div");
-          try {
-            new svguitar.SVGuitarChord(svgBox)
-              .configure({ width: 70, height: 120 })
-              .chord(getFingers(ac))
-              .draw();
-          } catch (error) {
-            console.error(`Erro ao desenhar acorde ${ac}:`, error);
+      function startAutoScroll() {
+        toggleBtn.textContent = "Stop";
+        acc = 0;
+        scrollInterval = setInterval(() => {
+          acc += speed;
+          if (acc >= 1) {
+            const px = Math.floor(acc);
+            acc -= px;
+            window.scrollBy(0, px);
           }
 
-          const lbl = document.createElement("div");
-          lbl.textContent = ac;
-
-          wrap.appendChild(svgBox);
-          wrap.appendChild(lbl);
-          cont.appendChild(wrap);
-        });
+          if (
+            window.innerHeight + window.scrollY >=
+            document.body.scrollHeight
+          ) {
+            console.log("🏁 Chegou ao fim da página");
+            stopAutoScroll();
+          }
+        }, 16);
       }
 
-      /* ==== 5. CARREGA A PRIMEIRA ABA AO ABRIR ==== */
-      const abaInicial =
-        document.querySelector(".tab-button.active").dataset.tab;
-      atualizarAcordes(abaInicial);
+      function stopAutoScroll() {
+        clearInterval(scrollInterval);
+        scrollInterval = null;
+        toggleBtn.textContent = "Start";
+      }
+
+      function updateSpeedUI() {
+        speedValue.textContent = speed.toFixed(1);
+        toggleBtn.disabled = speed <= 0;
+      }
+
+      /* ========================================================
+         5) INICIALIZAÇÃO
+      ======================================================== */
+      window.addEventListener("DOMContentLoaded", () => {
+        handleSearch(); // mostra todos os botões na carga inicial
+      });
     </script>
   </body>
 </html>
